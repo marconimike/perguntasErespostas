@@ -1,6 +1,19 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
+const connection = require("./database/database");
+const Pergunta = require("./database/Pergunta");
+
+//Database
+
+connection
+    .authenticate()
+    .then(() => {
+        console.log(" Conexão feita com o banco de dados!")
+    })
+    .catch((msgErro) => {
+        console.log(msgErro);
+    })
 
 //Estou dizendo para o Express usar o EJS com View engine
 app.set('view engine','ejs');
@@ -19,7 +32,12 @@ app.get("/perguntar",(req, res) => {
 app.post("/salvarpergunta",(req, res) =>{
     var titulo = req.body.titulo;
     var descricao = req.body.descricao;
-    res.send("Formulário recebido! titulo" + titulo + " " + "descricao" + descricao);
+    Pergunta.create({
+        titulo: titulo,
+        descricao: descricao
+    }).then(()=> {
+        res.redirect("/");
+    })
 });
 
 app.listen(8081,()=>{
