@@ -18,12 +18,21 @@ connection
 //Estou dizendo para o Express usar o EJS com View engine
 app.set('view engine','ejs');
 app.use(express.static('public'));
+
 //Body Parser
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+
 //Rotas
 app.get("/",(req, res) => {
-    res.render("index");
+    Pergunta.findAll({ raw: true, order:[
+        ['id','DESC'] //ASC = CRescente || DESC = decrescente
+    ]}).then(perguntas =>{
+        res.render("index",{
+            perguntas: perguntas
+        });
+    });
+    
 });
 
 app.get("/perguntar",(req, res) => {
